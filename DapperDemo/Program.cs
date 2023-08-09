@@ -17,7 +17,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddScoped<ICompanyRepository, CompanyRepositoryEF>();
+//builder.Services.AddScoped<ICompanyRepository, CompanyRepositoryEF>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
 
 
