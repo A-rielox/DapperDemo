@@ -18,7 +18,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 //builder.Services.AddScoped<ICompanyRepository, CompanyRepositoryEF>();
-builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+//builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepositorySP>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 
 

@@ -42,6 +42,9 @@ public class CompaniesController : Controller
         return View(company);
     }
 
+
+    //////////////////////////////////////////////
+    /////////////////////////////////////////////////
     // GET: Companies/Create
     public IActionResult Create()
     {
@@ -53,6 +56,7 @@ public class CompaniesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("CompanyId,Name,Address,City,State,PostalCode")] Company company)
     {
+        ModelState.Remove("Employees");
         if (ModelState.IsValid)
         {
             _compRepo.Add(company);
@@ -61,6 +65,9 @@ public class CompaniesController : Controller
         return View(company);
     }
 
+
+    //////////////////////////////////////////////
+    /////////////////////////////////////////////////
     // GET: Companies/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
@@ -86,15 +93,20 @@ public class CompaniesController : Controller
         {
             return NotFound();
         }
-
+        
+        ModelState.Remove("Employees");
         if (ModelState.IsValid)
         {
             _compRepo.Update(company);
             return RedirectToAction(nameof(Index));
         }
+
         return View(company);
     }
 
+
+    //////////////////////////////////////////////
+    /////////////////////////////////////////////////
     // GET: Companies/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
