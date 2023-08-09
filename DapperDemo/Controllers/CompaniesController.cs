@@ -13,12 +13,18 @@ public class CompaniesController : Controller
         _compRepo = compRepo;
     }
 
+
+    //////////////////////////////////////////////
+    /////////////////////////////////////////////////
     // GET: Companies
     public async Task<IActionResult> Index()
     {
         return View(_compRepo.GetAll());
     }
 
+
+    //////////////////////////////////////////////
+    /////////////////////////////////////////////////
     // GET: Companies/Details/5
     public async Task<IActionResult> Details(int? id)
     {
