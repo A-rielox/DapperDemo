@@ -24,38 +24,39 @@
             <th>
                 @Html.DisplayNameFor(model => model.CompanyId)
             </th>
-         
+
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
 
                 <td>
-                    @Html.DisplayFor(modelItem => item.CompanyId)
+                    @Html.DisplayFor(modelItem => item.Company.Name)
                 </td>
-           
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EmployeeId" class="btn btn-info">Edit</a> 
-            </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.EmployeeId" class="btn btn-info">Edit</a>
+                </td>
 
                 <td>
                     <a asp-action="Delete" asp-route-id="@item.EmployeeId" class="btn btn-danger">Delete</a>
                 </td>
-        </tr>
-}
+            </tr>
+        }
     </tbody>
 </table>

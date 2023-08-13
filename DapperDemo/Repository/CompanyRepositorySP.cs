@@ -21,23 +21,23 @@ public class CompanyRepositorySP : ICompanyRepository
     /////////////////////////////////////////////////
     public Company Add(Company company)
     {
-        var sql = "INSERT INTO Companies (Name, Address, City, State, PostalCode) " +
-                    "VALUES(@Name, @Address, @City, @State, @PostalCode);" +
+        // esta forma de pasar parametros es para restringir mas lo que paso, pero tambien lo puedo hacer como en CompanyRepository.cs
+        // que es pasar directo el "company"
+        var parameters = new DynamicParameters();
 
-                    "SELECT CAST(SCOPE_IDENTITY() as int); ";
+        // @CompanyId es Output parameter en el sp
+        parameters.Add("@CompanyId", 0, DbType.Int32, direction: ParameterDirection.Output);
+        parameters.Add("@Name", company.Name);
+        parameters.Add("@Address", company.Address);
+        parameters.Add("@City", company.City);
+        parameters.Add("@State", company.State);
+        parameters.Add("@PostalCode", company.PostalCode);
 
-        // var id = db.Query<int>(sql, new {
-        //     @Name = company.Name,
-        //     @Address = company.Address,
-        //     @City = company.City,
-        //     @State = company.State,
-        //     @PostalCode = company.PostalCode
-        // }).Single();
+        this.db.Execute("usp_AddCompany",
+                         parameters,
+                         commandType: CommandType.StoredProcedure);
 
-        // como los field names son ='s => Dapper lo hace solo
-        var id = db.Query<int>(sql, company).Single();
-
-        company.CompanyId = id;
+        company.CompanyId = parameters.Get<int>("CompanyId");
 
         return company;
     }
@@ -47,10 +47,10 @@ public class CompanyRepositorySP : ICompanyRepository
     /////////////////////////////////////////////////
     public Company Find(int id)
     {
-        var sql = "SELECT * FROM Companies " +
-                    "WHERE CompanyId = @CompanyId";
-
-        return db.Query<Company>(sql, new { @CompanyId = id }).Single();
+        return db.Query<Company>("usp_GetCompany",
+                                  new { CompanyId = id },
+                                  commandType: CommandType.StoredProcedure)
+                 .Single();
     }
 
 
@@ -58,9 +58,9 @@ public class CompanyRepositorySP : ICompanyRepository
     /////////////////////////////////////////////////
     public List<Company> GetAll()
     {
-        var sql = "SELECT * FROM Companies";
-
-        return db.Query<Company>(sql).ToList();
+        return db.Query<Company>("usp_GetALLCompany",
+                                  commandType: CommandType.StoredProcedure)
+                 .ToList();
     }
 
 
@@ -68,9 +68,9 @@ public class CompanyRepositorySP : ICompanyRepository
     /////////////////////////////////////////////////
     public void Remove(int id)
     {
-        var sql = "DELETE FROM Companies WHERE CompanyId = @Id";
-
-        db.Execute(sql, new { id });
+        db.Execute("usp_RemoveCompany",
+                    new { CompanyId = id },
+                    commandType: CommandType.StoredProcedure);
     }
 
 
@@ -78,15 +78,18 @@ public class CompanyRepositorySP : ICompanyRepository
     /////////////////////////////////////////////////
     public Company Update(Company company)
     {
-        // tiene q ir con @CompanyId no puede ser solo "Id" xq es lo q tengo en el modelo
-        // y es lo q utiliza p' hacer el binding automatico y poder pasar solo "company" en el Execute
-        var sql =   "UPDATE Companies " +
-                    "SET Name = @Name, Address = @Address, City = @City, " +
-                        "State = @State, PostalCode = @PostalCode " +
-                    "WHERE CompanyId = @CompanyId";
+        var parameters = new DynamicParameters();
 
-        // Execute p' cuando no quiero q devuelva algo, solo q ejecute
-        db.Execute(sql, company);
+        parameters.Add("@CompanyId", company.CompanyId, DbType.Int32);
+        parameters.Add("@Name", company.Name);
+        parameters.Add("@Address", company.Address);
+        parameters.Add("@City", company.City);
+        parameters.Add("@State", company.State);
+        parameters.Add("@PostalCode", company.PostalCode);
+
+        this.db.Execute("usp_UpdateCompany",
+                         parameters,
+                         commandType: CommandType.StoredProcedure);
 
         return company;
     }
