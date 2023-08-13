@@ -29,7 +29,12 @@ namespace DapperDemo.Controllers
 
         //////////////////////////////////////////////
         /////////////////////////////////////////////////
-        public IActionResult Privacy()
+        public IActionResult AddTestRecords()
+        {
+            return View();
+        }
+
+        public IActionResult RemoveTestRecords()
         {
             return View();
         }

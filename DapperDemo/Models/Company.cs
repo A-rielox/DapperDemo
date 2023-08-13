@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DapperDemo.Models;
 
-// p'q Dapper sepa el nombre de la tabla, ya que buscaba en "Companys" xdefault
+// p'q Dapper sepa el nombre de la tabla, ya que buscaba a "Companys" xdefault
 [Dapper.Contrib.Extensions.Table("Companies")]
 public class Company
 {
@@ -18,7 +18,7 @@ public class Company
     public string State { get; set; }
     public string PostalCode { get; set; }
 
-    // p' decirle a Mapper que esta prop no es writeable ( esta prop NO va a la tabla )
+    // p' decirle a Dapper que esta prop no es writeable ( esta prop NO va a la tabla )
     [Write(false)]
     public List<Employee> Employees { get; set; } = new List<Employee>();
 }

@@ -22,9 +22,9 @@ public class CompanyRepository : ICompanyRepository
     public Company Add(Company company)
     {
         var sql = "INSERT INTO Companies (Name, Address, City, State, PostalCode) " +
-                    "VALUES(@Name, @Address, @City, @State, @PostalCode);" +
+                  "VALUES(@Name, @Address, @City, @State, @PostalCode);" +
 
-                    "SELECT CAST(SCOPE_IDENTITY() as int); ";
+                  "SELECT CAST(SCOPE_IDENTITY() as int); ";
 
         // var id = db.Query<int>(sql, new {
         //     @Name = company.Name,
@@ -48,7 +48,7 @@ public class CompanyRepository : ICompanyRepository
     public Company Find(int id)
     {
         var sql = "SELECT * FROM Companies " +
-                    "WHERE CompanyId = @CompanyId";
+                  "WHERE CompanyId = @CompanyId";
 
         return db.Query<Company>(sql, new { @CompanyId = id }).Single();
     }

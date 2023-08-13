@@ -23,29 +23,34 @@ public class BonusRepository : IBonusRepository
     public void AddTestCompanyWithEmployees(Company objComp)
     {
         var sql =   "INSERT INTO Companies (Name, Address, City, State, PostalCode) " +
-                    "VALUES(@Name, @Address, @City, @State, @PostalCode);"
+                    "VALUES(@Name, @Address, @City, @State, @PostalCode);" +
 
-                 + "SELECT CAST(SCOPE_IDENTITY() as int); ";
+                    "SELECT CAST(SCOPE_IDENTITY() as int); ";
 
         var id = db.Query<int>(sql, objComp).Single();
 
         objComp.CompanyId = id;
 
-        //foreach(var employee in objComp.Employees)
-        //{
-        //    employee.CompanyId = objComp.CompanyId;
-        //    var sql1 = "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) VALUES(@Name, @Title, @Email, @Phone, @CompanyId);"
-        //           + "SELECT CAST(SCOPE_IDENTITY() as int); ";
-        //    db.Query<int>(sql1, employee).Single();
-        //}
+        foreach (var employee in objComp.Employees)
+        {
+            employee.CompanyId = objComp.CompanyId;
 
-        objComp.Employees.Select(c => { c.CompanyId = id; return c; }).ToList();
+            var sql1 = "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) " +
+                       "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
 
-        var sqlEmp =    "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) " +
-                        "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);"
-                 +      "SELECT CAST(SCOPE_IDENTITY() as int); ";
+                       "SELECT CAST(SCOPE_IDENTITY() as int);";
 
-        db.Execute(sqlEmp, objComp.Employees);
+            db.Query<int>(sql1, employee).Single();
+        }
+
+        //objComp.Employees.Select(c => { c.CompanyId = id; return c; }).ToList();
+
+        //var sqlEmp =    "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) " +
+        //                "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);"
+
+        //         +      "SELECT CAST(SCOPE_IDENTITY() as int); ";
+
+        //db.Execute(sqlEmp, objComp.Employees);
     }
 
 
@@ -121,7 +126,7 @@ public class BonusRepository : IBonusRepository
     /////////////////////////////////////////////////
     /// one to many con multiple results ( el query me trae 2 tablas )
     /// one to many relation - 1 company -> many employees
-    public Company GetCompanyWithEmployees(int id)
+    public Company GetCompanyWithEmployees(int id) // id de la company
     {
         var p = new
         {
@@ -130,16 +135,17 @@ public class BonusRepository : IBonusRepository
 
         // este me devuelve 2 resultados ( las 2 tablas )
         var sql =   "SELECT * FROM Companies " +
-                    "WHERE CompanyId = @CompanyId;"
+                    "WHERE CompanyId = @CompanyId;" +
 
-                  + " SELECT * FROM Employees WHERE CompanyId = @CompanyId; ";
+                    "SELECT * FROM Employees " +
+                    "WHERE CompanyId = @CompanyId; ";
 
         Company company;
 
         // la "lists" va a tener los 2 resultados ( las 2 tablas )
         using (var lists = db.QueryMultiple(sql, p))
         {
-            company = lists.Read<Company>().ToList().FirstOrDefault();
+            company = lists.Read<Company>().ToList().Single();
             company.Employees = lists.Read<Employee>().ToList();
         }
 
@@ -177,6 +183,33 @@ public class BonusRepository : IBonusRepository
 
         return employee.ToList();
     }
+
+    /*                        MEJOR MANDAR DIRECTO DE UN sp
+     
+        SELECT 
+        	e.EmployeeId,
+        	e.Name,
+        	e.Email,
+        	e.Phone,
+        	e.Title,
+        	c.Name
+        FROM Employees e
+        INNER JOIN Companies c ON e.CompanyId = c.CompanyId
+
+                            CON CompanyId
+        SELECT 
+        	e.EmployeeId,
+        	e.Name,
+        	e.Email,
+        	e.Phone,
+        	e.Title,
+        	c.Name
+        FROM Employees e
+        INNER JOIN Companies c ON e.CompanyId = c.CompanyId
+        WHERE c.CompanyId = 8
+        ;
+
+    */
 
 
     //////////////////////////////////////////////

@@ -21,11 +21,12 @@ public class CompanyRepositorySP : ICompanyRepository
     /////////////////////////////////////////////////
     public Company Add(Company company)
     {
-        // esta forma de pasar parametros es para restringir mas lo que paso, pero tambien lo puedo hacer como en CompanyRepository.cs
+        // esta forma de pasar parametros es para restringir mas lo que paso, pero
+        // tambien lo puedo hacer como en CompanyRepository.cs
         // que es pasar directo el "company"
         var parameters = new DynamicParameters();
 
-        // @CompanyId es Output parameter en el sp
+        // @CompanyId es Output parameter en el sp, 0 xq es le valor del id p' crear
         parameters.Add("@CompanyId", 0, DbType.Int32, direction: ParameterDirection.Output);
         parameters.Add("@Name", company.Name);
         parameters.Add("@Address", company.Address);

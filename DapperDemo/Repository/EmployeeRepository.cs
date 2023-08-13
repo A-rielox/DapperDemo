@@ -22,9 +22,9 @@ public class EmployeeRepository : IEmployeeRepository
     public Employee Add(Employee employee)
     {
         var sql =   "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) " +
-                    "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);"
+                    "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
 
-                    + "SELECT CAST(SCOPE_IDENTITY() as int); ";
+                    "SELECT CAST(SCOPE_IDENTITY() as int); ";
 
         var id = db.Query<int>(sql, employee).Single();
         employee.EmployeeId = id;
@@ -75,6 +75,7 @@ public class EmployeeRepository : IEmployeeRepository
                     "WHERE EmployeeId = @EmployeeId";
 
         db.Execute(sql, employee);
+
         return employee;
     }
 }
