@@ -27,30 +27,40 @@ public class BonusRepository : IBonusRepository
 
                     "SELECT CAST(SCOPE_IDENTITY() as int); ";
 
+        
         var id = db.Query<int>(sql, objComp).Single();
 
         objComp.CompanyId = id;
 
-        foreach (var employee in objComp.Employees)
-        {
-            employee.CompanyId = objComp.CompanyId;
+        // foreach (var employee in objComp.Employees)
+        // {
+        //     employee.CompanyId = objComp.CompanyId;
 
-            var sql1 = "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) " +
-                       "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
+        //     var sql1 = "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) " +
+        //                "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
 
-                       "SELECT CAST(SCOPE_IDENTITY() as int);";
+        //                "SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            db.Query<int>(sql1, employee).Single();
-        }
+        //     db.Query<int>(sql1, employee).Single();
+        // }
 
-        //objComp.Employees.Select(c => { c.CompanyId = id; return c; }).ToList();
+        //
+        // hacia arriba es agregando 1 x 1, separado en c/query
+        //
 
-        //var sqlEmp =    "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) " +
-        //                "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);"
+        objComp.Employees.Select(e => {
+            e.CompanyId = id;
+        
+            return e;
+        }).ToList();
 
-        //         +      "SELECT CAST(SCOPE_IDENTITY() as int); ";
 
-        //db.Execute(sqlEmp, objComp.Employees);
+        var sqlEmp = "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) " +
+                     "VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
+
+                     "SELECT CAST(SCOPE_IDENTITY() as int);";
+
+        db.Execute(sqlEmp, objComp.Employees);
     }
 
 
@@ -230,8 +240,5 @@ public class BonusRepository : IBonusRepository
                                  "WHERE Name like '%' + @name + '%' ",
                                  new { name })
                  .ToList();
-    }
-
-
-    
+    }    
 }
